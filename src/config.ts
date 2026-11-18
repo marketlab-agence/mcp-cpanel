@@ -1,0 +1,36 @@
+/**
+ * Configuration lue exclusivement depuis l'environnement.
+ * Le jeton n'est jamais journalisé ni renvoyé au modèle.
+ */
+export interface CpanelConfig {
+    /** Hôte cPanel, ex. `vautour.o2switch.net` ou `mondomaine.fr` (sans schéma). */
+    host: string;
+    /** Port UAPI (2083 = cPanel en HTTPS). */
+    port: number;
+    /** Identifiant cPanel (o2switch : l'identifiant de connexion du compte). */
+    user: string;
+    /** Jeton API créé dans cPanel > Sécurité > Gérer les jetons d'API. */
+    token: string;
+    /** `true` uniquement si CPANEL_ALLOW_WRITES=1 : enregistre les outils qui modifient le compte. */
+    allowWrites: boolean;
+    /** Délai maximal d'un appel, en millisecondes. */
+    timeoutMs: number;
+}
+
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): CpanelConfig {
+    const missing = ['CPANEL_HOST', 'CPANEL_USER', 'CPANEL_TOKEN'].filter((k) => !env[k]?.trim());
+    if (missing.length) {
+        throw new Error(`Variables d'environnement manquantes : ${missing.join(', ')}. Voir README.`);
+    }
+    const host = env.CPANEL_HOST!.trim().replace(/^https?:\/\//, '').replace(/[:/].*$/, '');
+    const port = Number(env.CPANEL_PORT || 2083);
+    if (!Number.isInteger(port) || port <= 0) throw new Error('CPANEL_PORT invalide');
+    return {
+        host,
+        port,
+        user: env.CPANEL_USER!.trim(),
+        token: env.CPANEL_TOKEN!.trim(),
+        allowWrites: env.CPANEL_ALLOW_WRITES === '1' || env.CPANEL_ALLOW_WRITES === 'true',
+        timeoutMs: Number(env.CPANEL_TIMEOUT_MS || 30000),
+    };
+}
