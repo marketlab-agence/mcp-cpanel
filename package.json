@@ -1,6 +1,6 @@
 {
   "name": "mcp-cpanel",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Serveur MCP local pour cPanel (o2switch et autres hébergeurs cPanel) — UAPI, jeton API, lecture seule par défaut.",
   "type": "module",
   "license": "MIT",

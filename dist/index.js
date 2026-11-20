@@ -15,10 +15,14 @@ import { registerTools } from './tools.js';
 async function main() {
     const cfg = loadConfig();
     const client = new CpanelClient(cfg);
-    const server = new McpServer({ name: 'mcp-cpanel', version: '0.1.0' });
+    const server = new McpServer({ name: 'mcp-cpanel', version: '0.2.0' });
     const tools = registerTools(server, client, cfg);
     await server.connect(new StdioServerTransport());
-    console.error(`[mcp-cpanel] ${cfg.user}@${cfg.host}:${cfg.port} — ${tools.length} outils (${cfg.allowWrites ? 'écritures ACTIVÉES' : 'lecture seule'})`);
+    const level = cfg.allowDestructive ? 'lecture + écriture + SUPPRESSION' : cfg.allowWrites ? 'lecture + écriture' : 'lecture seule';
+    console.error(`[mcp-cpanel] ${cfg.user}@${cfg.host}:${cfg.port} — ${tools.length} outils (${level})${cfg.journalPath ? ` — journal : ${cfg.journalPath}` : ''}`);
+    if (process.env.CPANEL_ALLOW_DESTRUCTIVE && !cfg.allowWrites) {
+        console.error('[mcp-cpanel] CPANEL_ALLOW_DESTRUCTIVE ignoré : il exige aussi CPANEL_ALLOW_WRITES=1.');
+    }
 }
 main().catch((err) => {
     console.error(`[mcp-cpanel] démarrage impossible : ${err?.message || err}`);

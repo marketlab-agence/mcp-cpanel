@@ -78,7 +78,24 @@ export class CpanelClient {
         return json;
     }
 
-    /** Appel API 2 (nécessaire pour Cron, qui n'a pas d'équivalent UAPI complet). */
+    /** Appel UAPI en multipart (envoi de fichiers, ex. Fileman::upload_files). */
+    async uapiMultipart<T = unknown>(module: string, fn: string, fields: Params, files: { field: string; name: string; data: Uint8Array }[]): Promise<UapiResponse<T>> {
+        if (!SAFE_NAME.test(module) || !SAFE_NAME.test(fn)) throw new CpanelError(`Nom de module/fonction invalide : ${module}::${fn}`);
+        const form = new FormData();
+        for (const [k, v] of Object.entries(fields)) if (v !== undefined) form.append(k, String(v));
+        for (const f of files) form.append(f.field, new Blob([f.data]), f.name);
+        const json = (await this.request(`${this.base}/execute/${module}/${fn}`, {
+            method: 'POST',
+            headers: this.headers(),
+            body: form,
+        })) as UapiResponse<T>;
+        if (json?.status !== 1) {
+            throw new CpanelError(this.redact(`${module}::${fn} a échoué : ${(json?.errors || []).join(' ; ') || 'erreur inconnue'}`));
+        }
+        return json;
+    }
+
+    /** Appel API 2 (nécessaire pour Cron, Fileman::fileop, AddonDomain, Park, qui n'ont pas d'équivalent UAPI complet). */
     async api2<T = unknown>(module: string, fn: string, params: Params = {}): Promise<T> {
         if (!SAFE_NAME.test(module) || !SAFE_NAME.test(fn)) throw new CpanelError(`Nom de module/fonction invalide : ${module}::${fn}`);
         const body = new URLSearchParams({
