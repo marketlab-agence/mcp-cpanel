@@ -4,14 +4,22 @@
   "description": "Serveur MCP local pour cPanel (o2switch et autres hébergeurs cPanel) — UAPI, jeton API, lecture seule par défaut.",
   "type": "module",
   "license": "MIT",
-  "bin": { "mcp-cpanel": "dist/index.js" },
-  "files": ["dist", "README.md"],
-  "engines": { "node": ">=20" },
+  "bin": {
+    "mcp-cpanel": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "test": "node --test dist/*.test.js",
-    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js"
+    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "prepare": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.2",
@@ -20,5 +28,9 @@
   "devDependencies": {
     "@types/node": "^22.19.11",
     "typescript": "~5.8.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marketlab-agence/mcp-cpanel.git"
   }
 }

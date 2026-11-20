@@ -45,17 +45,26 @@ Notez aussi :
 
 > Révoquer : même écran, bouton *Révoquer*. Faites-le immédiatement si le jeton a pu fuiter.
 
-## 2. Installer (une fois par machine)
+## 2. Installer (une fois par machine, pour TOUS vos projets)
 
-Prérequis : Node.js ≥ 20.
+Prérequis : Node.js ≥ 20. Une fois installé, `mcp-cpanel` est une commande globale, comme `git` :
+l'endroit où se trouve le code source n'a plus aucune importance.
+
+**Option A — depuis son dépôt GitHub dédié** (recommandé, aucun dossier à garder sur le disque) :
 
 ```bash
-cd tools/mcp-cpanel        # ou le dossier où vous avez cloné ce paquet
-npm install
-npm run build
-npm test                   # 9 tests, sans réseau
-npm install -g .           # rend la commande `mcp-cpanel` disponible partout
+npm install -g github:marketlab-agence/mcp-cpanel   # compile automatiquement (script prepare)
 ```
+
+**Option B — depuis un dossier local** (ce dossier, ou une copie) :
+
+```bash
+npm install && npm test    # 9 tests, sans réseau
+npm install -g .
+```
+
+Vérifier : `where mcp-cpanel` (Windows) ou `which mcp-cpanel` (macOS/Linux).
+Mettre à jour : relancer la même commande d'installation. Désinstaller : `npm uninstall -g mcp-cpanel`.
 
 ## 3. Stocker les identifiants dans l'environnement utilisateur
 
@@ -142,14 +151,19 @@ Test sans assistant : `npm run inspect` ouvre l'inspecteur MCP officiel dans le 
 | `Connexion … impossible` | Mauvais `CPANEL_HOST`, port 2083 filtré par le réseau, ou VPN |
 | Aucun outil d'écriture | Normal : définir `CPANEL_ALLOW_WRITES=1` |
 
-## Publier comme dépôt indépendant
+## Publier comme dépôt indépendant (requis pour l'option A)
 
-Ce dossier est autonome. Pour en faire un dépôt à part en conservant l'historique :
+Ce dossier est autonome. Pour en faire le dépôt `marketlab-agence/mcp-cpanel` en conservant l'historique :
+
+1. Créer le dépôt **vide** `marketlab-agence/mcp-cpanel` sur GitHub (privé ou public).
+2. Depuis le dépôt qui contient ce dossier :
 
 ```bash
 git subtree split --prefix tools/mcp-cpanel -b mcp-cpanel
-git push git@github.com:<vous>/mcp-cpanel.git mcp-cpanel:main
+git push https://github.com/marketlab-agence/mcp-cpanel.git mcp-cpanel:main
 ```
+
+Dépôt privé : l'option A fonctionne si votre `git` est déjà authentifié sur GitHub.
 
 ## Licence
 
