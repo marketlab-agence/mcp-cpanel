@@ -53,8 +53,12 @@ l'endroit où se trouve le code source n'a plus aucune importance.
 **Option A — depuis son dépôt GitHub dédié** (recommandé, aucun dossier à garder sur le disque) :
 
 ```bash
-npm install -g github:marketlab-agence/mcp-cpanel   # compile automatiquement (script prepare)
+npm install -g https://github.com/marketlab-agence/mcp-cpanel/archive/refs/heads/main.tar.gz
 ```
+
+> N'utilisez pas `npm install -g github:…` : avec `-g`, npm crée un lien vers un clone temporaire
+> qu'il supprime ensuite (commande introuvable). L'archive `.tar.gz` s'installe proprement.
+> Le dossier `dist/` (code compilé) est versionné : aucune compilation n'a lieu à l'installation.
 
 **Option B — depuis un dossier local** (ce dossier, ou une copie) :
 
@@ -163,7 +167,16 @@ git subtree split --prefix tools/mcp-cpanel -b mcp-cpanel
 git push https://github.com/marketlab-agence/mcp-cpanel.git mcp-cpanel:main
 ```
 
-Dépôt privé : l'option A fonctionne si votre `git` est déjà authentifié sur GitHub.
+Dépôt privé : l'option A demande un jeton GitHub ; gardez le dépôt public ou utilisez l'option B.
+
+## Modifier le code
+
+`dist/` est versionné pour que l'installation n'ait rien à compiler. Après toute modification de `src/` :
+
+```bash
+npm run build && npm test
+git add src dist && git commit -m "…"
+```
 
 ## Licence
 
